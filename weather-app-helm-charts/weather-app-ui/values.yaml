@@ -1,11 +1,11 @@
-# Default values for weather-app-weather.
+# Default values for weather-app-ui.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 2
 
 image:
-  repository: adityadevops/weather-app-weather
+  repository: adityadevops/weather-app-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -16,7 +16,7 @@ fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
@@ -40,8 +40,8 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
-  port: 5000
+  type: LoadBalancer
+  port: 3000
 
 ingress:
   enabled: false

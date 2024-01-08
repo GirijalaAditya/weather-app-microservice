@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}
+data:
+  AUTH_HOST: "weather-app-auth"
+  AUTH_PORT: "8080"
+  WEATHER_HOST: "weather-app-weather"
+  WEATHER_PORT: "5000" 

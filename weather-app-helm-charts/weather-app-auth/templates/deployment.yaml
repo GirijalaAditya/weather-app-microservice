@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "weather-app-ui.fullname" . }}
+  name: {{ include "weather-app-auth.fullname" . }}
   labels:
-    {{- include "weather-app-ui.labels" . | nindent 4 }}
+    {{- include "weather-app-auth.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "weather-app-ui.selectorLabels" . | nindent 6 }}
+      {{- include "weather-app-auth.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "weather-app-ui.labels" . | nindent 8 }}
+        {{- include "weather-app-auth.labels" . | nindent 8 }}
 	{{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "weather-app-ui.serviceAccountName" . }}
+      serviceAccountName: {{ include "weather-app-auth.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -37,14 +37,13 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          - name: AUTH_HOST
-            value: "weather-app-auth"
-          - name: AUTH_PORT
-            value: "8080"
-          - name: WEATHER_HOST
-            value: "weather-app-weather"
-          - name: WEATHER_PORT
-            value: "5000"
+          - name: DB_HOST
+            value: mysql
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: mysql-root-password
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "weather-app-auth.fullname" . }}
+  name: {{ include "weather-app-ui.fullname" . }}
   labels:
-    {{- include "weather-app-auth.labels" . | nindent 4 }}
+    {{- include "weather-app-ui.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "weather-app-auth.selectorLabels" . | nindent 6 }}
+      {{- include "weather-app-ui.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "weather-app-auth.labels" . | nindent 8 }}
+        {{- include "weather-app-ui.labels" . | nindent 8 }}
 	{{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "weather-app-auth.serviceAccountName" . }}
+      serviceAccountName: {{ include "weather-app-ui.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -37,13 +37,26 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          - name: DB_HOST
-            value: {{ .Release.Name }}-mysql
-          - name: DB_PASSWORD
+          - name: AUTH_HOST
             valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-mysql
-                key: mysql-root-password
+              configMapKeyRef:
+                name: {{ .Release.Name }}
+                key: AUTH_HOST
+          - name: AUTH_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}
+                key: AUTH_PORT
+          - name: WEATHER_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}
+                key: WEATHER_HOST
+          - name: WEATHER_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}
+                key: WEATHER_PORT
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

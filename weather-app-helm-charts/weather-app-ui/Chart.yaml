@@ -1,6 +1,6 @@
 apiVersion: v2
 name: weather-app-ui
-description: UI App for Weather App Microservice
+description: UI App
 type: application
 version: 0.1.0
 appVersion: "1.0.0"
