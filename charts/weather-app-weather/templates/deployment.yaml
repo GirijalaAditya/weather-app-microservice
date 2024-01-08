@@ -38,10 +38,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}
-                key: apikey
+            value: ZWNiYzM5NmY0Nm1zaGI2NWNiYjFmODJjZjMzNHAxZmNjODdqc25hNWU5NjJhM2M1NDI=
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
