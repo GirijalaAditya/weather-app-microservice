@@ -47,7 +47,7 @@ spec:
             value: "5000"
           ports:
             - name: http
-              containerPort: {{ .Values.service.containerPort }}
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
